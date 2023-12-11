@@ -1,8 +1,6 @@
 package ru.rishaleva.springBootSecurity.service;
 
-import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,14 +12,13 @@ import ru.rishaleva.springBootSecurity.model.User;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-
 @Component
 public class MyUserDetailsService implements UserDetailsService {
-    UserServiceImpl userServiceImpl;
+   private UserServiceImpl userServiceImpl;
 
     @Autowired
-    public MyUserDetailsService(UserServiceImpl userService) {
-        this.userServiceImpl = userService;
+    public MyUserDetailsService(UserServiceImpl userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
     }
 
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
