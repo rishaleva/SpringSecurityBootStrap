@@ -1,6 +1,7 @@
 package ru.rishaleva.springBootSecurity.service;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,29 +12,28 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.rishaleva.springBootSecurity.model.Role;
 import ru.rishaleva.springBootSecurity.model.User;
+import ru.rishaleva.springBootSecurity.repository.UserRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 public class MyUserDetailsService implements UserDetailsService {
-    UserServiceImpl userServiceImpl;
+    UserRepository userRepository;
 
     @Autowired
-    public MyUserDetailsService(UserServiceImpl userService) {
-        this.userServiceImpl = userService;
+    public MyUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = userServiceImpl.findByUserName(name);
-        if (user == null) {
-            throw new UsernameNotFoundException("User " + name + " not found");
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("User not Found!!!");
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                mapRoles(user.getRoles()));
-    }
-
-    private Collection<? extends GrantedAuthority> mapRoles(Collection<Role> roles) {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+        User user = optionalUser.get();
+        Hibernate.initialize(user.getRoles());
+        return user;
     }
 }

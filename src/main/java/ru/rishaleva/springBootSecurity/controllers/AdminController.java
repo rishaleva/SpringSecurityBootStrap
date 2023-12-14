@@ -20,23 +20,22 @@ import java.util.List;
 public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
+
     @Autowired
     public AdminController(UserServiceImpl userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
-    //ALL
     @GetMapping(value = "/")
     public String getAllUsers(ModelMap model, Principal principal) {
-        User user = userService.findByUserName(principal.getName());
+        User user = userService.findByName(principal.getName());
         model.addAttribute("user", user);
         List<User> listOfUsers = userService.getAllUsers();
         model.addAttribute("listOfUsers", listOfUsers);
         return "users";
     }
 
-    // CREATE
     @GetMapping("/new")
     public String CreateUserForm(ModelMap model) {
         User user = new User();
@@ -52,7 +51,6 @@ public class AdminController {
         return "redirect:/admin/";
     }
 
-    // UPDATE
     @GetMapping("/{id}/update")
     public String getEditUserForm(ModelMap model, @PathVariable("id") Long id) {
         model.addAttribute("user", userService.getUser(id));
@@ -65,7 +63,6 @@ public class AdminController {
         return "redirect:/admin/";
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
         userService.removeUser(id);

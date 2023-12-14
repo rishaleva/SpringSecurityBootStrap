@@ -12,6 +12,7 @@ import java.security.Principal;
 @Controller
 public class UserController {
     private final UserServiceImpl userServiceImpl;
+
     @Autowired
     public UserController(UserServiceImpl userServiceImpl) {
         this.userServiceImpl = userServiceImpl;
@@ -19,7 +20,7 @@ public class UserController {
 
     @GetMapping("/user")
     public String userPage(Model model, Principal principal) {
-        User user = userServiceImpl.findByUserName(principal.getName());
+        User user = userServiceImpl.findByName(principal.getName());
         model.addAttribute("user", user);
         return "user";
     }
